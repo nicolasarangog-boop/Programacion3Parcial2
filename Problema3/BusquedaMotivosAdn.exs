@@ -14,43 +14,45 @@ defmodule Busqueda_ADN do
   """
   def main do
     if File.exists?(@muestras) and File.exists?(@motivos) do
-      datos_muestras = ArchivosADN.leer_datos(@muestras)
-      datos_motivos = ArchivosADN.leer_datos(@motivos)
+      datos_muestras = Archivos_ADN.leer_datos(@muestras)
+      datos_motivos = Archivos_ADN.leer_datos(@motivos)
 
-      datos_muestras = ArchivosADN.limpiar_muestras(datos_muestras)
-      datos_motivos = ArchivosADN.limpiar_motivos(datos_motivos)
+      lineas_muestras = Archivos_ADN.limpiar_muestras(datos_muestras)
+      lineas_motivos = Archivos_ADN.limpiar_motivos(datos_motivos)
 
-      errores = ValidacionADN.validar_datos(datos_muestras, datos_motivos)
+      muestras_organizadas= Archivos_ADN.organizar_muestras(lineas_muestras)
+
+      motivos_unicos = Archivos_ADN.eliminar_duplicados(lineas_motivos)
+
+      errores = Validacion_ADN.validar_datos(muestras_organizadas, motivos_unicos)
 
       if errores == [] do
-        motivos_unicos = ArchivosADN.eliminar_duplicados(datos_motivos)
-
-        reversa_complementaria = ProcesamientoADN.construir_reversa(motivos_unicos)
-        ventanas = ProcesamientoADN.generar_ventanas(datos_muestras, motivos_unicos)
+        reversas_complementarias = Procesamiento_ADN.construir_reversas(motivos_unicos)
+        ventanas = Procesamiento_ADN.generar_ventanas(muestras_organizadas, motivos_unicos)
 
         coincidencias_directas =
-          ProcesamientoADN.buscar_directas(datos_muestras, motivos_unicos, ventanas)
+          Procesamiento_ADN.buscar_directas(muestras_organizadas, motivos_unicos, ventanas)
 
         coincidencias_reversas =
-          ProcesamientoADN.buscar_reversas(datos_muestras, reversa_complementaria, ventanas)
+          Procesamiento_ADN.buscar_reversas(muestras_organizadas, reversas_complementarias, ventanas)
 
         coincidencias =
-          ResultadosADN.registrar_coincidencias(coincidencias_directas, coincidencias_reversas)
+          Resultados_ADN.registrar_coincidencias(coincidencias_directas, coincidencias_reversas)
 
-        coincidencias_ordenadas = ResultadosADN.ordenar_coincidencias(coincidencias)
-        ResultadosADN.escribir_coincidencias(coincidencias_ordenadas)
+        coincidencias_ordenadas = Resultados_ADN.ordenar_coincidencias(coincidencias)
+        Resultados_ADN.escribir_coincidencias(coincidencias_ordenadas)
 
-        resumen_muestras = ProcesamientoADN.calcular_muestras(coincidencias_ordenadas)
+        resumen_muestras = Procesamiento_ADN.calcular_muestras(coincidencias_ordenadas)
 
         resumen_motivos =
-          ProcesamientoADN.calcular_motivos(coincidencias_ordenadas, motivos_unicos)
+          Procesamiento_ADN.calcular_motivos(coincidencias_ordenadas, motivos_unicos)
 
-        motivos_no_encontrados = ProcesamientoADN.identificar_no_encontrados(resumen_motivos)
+        motivos_no_encontrados = Procesamiento_ADN.identificar_no_encontrados(resumen_motivos)
 
-        ResultadosADN.generar_resumen(resumen_muestras, resumen_motivos, motivos_no_encontrados)
+        Resultados_ADN.generar_resumen(resumen_muestras, resumen_motivos, motivos_no_encontrados)
         IO.puts("Proceso Finalizado Correctamente")
       else
-        ResultadosADN.escribir_errores(errores)
+        Resultados_ADN.escribir_errores(errores)
         IO.puts("Existen Errores de Validación")
       end
     else
