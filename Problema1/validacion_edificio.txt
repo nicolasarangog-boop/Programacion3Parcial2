@@ -1,0 +1,1 @@
+OK: Edificio y parámetros válidos.
