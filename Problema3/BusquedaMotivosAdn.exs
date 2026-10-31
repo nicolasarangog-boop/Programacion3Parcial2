@@ -42,7 +42,7 @@ defmodule Busqueda_ADN do
 
         motivos_no_encontrados = Procesamiento_ADN.identificar_no_encontrados(resumen_motivos)
 
-        resultado_resumen = Resultados_ADN.generar_resumen(resumen_muestras, resumen_motivos, motivos_no_encontrado)
+        resultado_resumen = Resultados_ADN.generar_resumen(resumen_muestras, resumen_motivos, motivos_no_encontrados)
 
         if resultado_csv == :ok and resultado_resumen == :ok do
           IO.puts("Proceso Finalizado Correctamente")
