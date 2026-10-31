@@ -42,7 +42,7 @@ defmodule Busqueda_ADN do
         coincidencias_ordenadas = Resultados_ADN.ordenar_coincidencias(coincidencias)
         Resultados_ADN.escribir_coincidencias(coincidencias_ordenadas)
 
-        resumen_muestras = Procesamiento_ADN.calcular_muestras(coincidencias_ordenadas)
+        resumen_muestras = Procesamiento_ADN.calcular_muestras(muestras_organizadas, coincidencias_ordenadas)
 
         resumen_motivos =
           Procesamiento_ADN.calcular_motivos(coincidencias_ordenadas, motivos_unicos)
