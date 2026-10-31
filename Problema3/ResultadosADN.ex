@@ -80,7 +80,7 @@ defmodule Resultados_ADN do
   - motivos_no_encontrados: lista motivos sin coincidencias
   """
   def generar_resumen(resumen_muestras, resumen_motivos, motivos_no_encontrados) do
-    IO.puts("RESUMEN DE BUSQUEDA DE MOTIVOS ADN\n")
+    IO.puts("\n RESUMEN DE BUSQUEDA DE MOTIVOS ADN\n")
 
     manejar_archivo("resumen_adn.txt", fn archivo ->
       with :ok <- IO.write(archivo, "RESUMEN DE BUSQUEDA DE MOTIVOS ADN\n\n"),

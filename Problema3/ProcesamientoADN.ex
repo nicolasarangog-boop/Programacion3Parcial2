@@ -20,7 +20,7 @@ defmodule Procesamiento_ADN do
   end
 
   # Caso recursivo
-  def construir_reversas([motivo | cola], reversas) do
+  defp construir_reversas([motivo | cola], reversas) do
     reversa = reversa_complementaria(motivo.secuencia)
 
     motivo_con_reversa = %{
@@ -107,39 +107,32 @@ defmodule Procesamiento_ADN do
     )
   end
 
-  # Caso Base: no hay suficientes bases para otra ventana
-  defp generar_ventana_secuencia(secuencia, _identificador, _motivo, longitud, inicio, ventanas)
-       when inicio + longitud > String.length(secuencia) do
-    Enum.reverse(ventanas)
-  end
+  # Caso Base y recursivo
+  defp generar_ventana_secuencia(secuencia, identificador, motivo, longitud, inicio, ventanas) do
+    longitud_secuencia = String.length(secuencia)
 
-  # Caso Recursivo
-  defp generar_ventana_secuencia(
-         secuencia,
-         identificador,
-         motivo,
-         longitud,
-         inicio,
-         ventanas
-       ) do
-    ventana = String.slice(secuencia, inicio, longitud)
+    if inicio + longitud > longitud_secuencia do
+      Enum.reverse(ventanas)
+    else
+      ventana = String.slice(secuencia, inicio, longitud)
 
-    nueva_ventana = %{
-      muestra: identificador,
-      motivo: motivo,
-      secuencia: ventana,
-      inicio: inicio,
-      fin: inicio + longitud - 1
-    }
+      nueva_ventana = %{
+        muestra: identificador,
+        motivo: motivo,
+        secuencia: ventana,
+        inicio: inicio,
+        fin: inicio + longitud - 1
+      }
 
-    generar_ventana_secuencia(
-      secuencia,
-      identificador,
-      motivo,
-      longitud,
-      inicio + 1,
-      [nueva_ventana | ventanas]
-    )
+      generar_ventana_secuencia(
+        secuencia,
+        identificador,
+        motivo,
+        longitud,
+        inicio + 1,
+        [nueva_ventana | ventanas]
+      )
+    end
   end
 
   @doc """
