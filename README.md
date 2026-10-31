@@ -1,7 +1,7 @@
 # Parcial 2
 
-**Asignatura:** Programación III
-**Proyecto:** Programación funcional con Elixir | Recursividad, Streams y structs
+- **Asignatura:** Programación III
+- **Proyecto:** Programación funcional con Elixir | Recursividad, Streams y structs
 
 ## Autores
 
