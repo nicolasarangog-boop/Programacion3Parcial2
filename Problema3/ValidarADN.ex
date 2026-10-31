@@ -1,4 +1,4 @@
-defmodule validar_adn do
+defmodule Validacion_ADN do
   @moduledoc """
   Modulo que valida los datos de entrada.
   - Autores: Briyith Sanchez Alonso y Nicolás Arango Gutiérrez
