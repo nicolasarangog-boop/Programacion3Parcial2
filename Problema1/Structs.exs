@@ -1,5 +1,5 @@
 defmodule Terreno do
- @typedoc """
+  @typedoc """
   Representa un terreno dentro del edificio donde se desplaza
   el robot de rescate.
 
@@ -13,13 +13,18 @@ defmodule Terreno do
     :costo
   ]
 end
- @typedoc """
+
+defmodule Recorrido do
+  @typedoc """
   Representa un recorrido realizado por el robot de rescate
   desde una posición inicial hasta una posición objetivo.
 
   Almacena las posiciones visitadas, la energía consumida
   y la cantidad de movimientos realizados.
   """
-defmodule Recorrido do
-  defstruct [:posiciones, :energia_consumida, :cantidad_movimientos]
+  defstruct [
+    :posiciones,
+    :energia_consumida,
+    :cantidad_movimientos
+  ]
 end
