@@ -2,8 +2,8 @@ defmodule Resultados_ADN do
   @moduledoc """
    Modulo que organiza y genera los resultados del procesamiento ADN
   - Autores: Briyith Sanchez Alonso y Nicolás Arango Gutiérrez
-    - Fecha: Octubre del 2026
-    - Licencia: GNU GPL V3
+  - Fecha: Octubre del 2026
+  - Licencia: GNU GPL V3
   """
   @doc """
   Funcion reune coincidencias directas y reversas
@@ -47,20 +47,17 @@ defmodule Resultados_ADN do
   - coincidencias: lista coincidencias ordenadas
   """
   def escribir_coincidencias(coincidencias) do
-    case File.open("coincidencias_adn.csv", [:write]) do
-      {:ok, archivo} ->
-        IO.write(archivo, "muestra;motivo;orientacion;inicio;fin;diferencias\n")
-        escribir_filas(coincidencias, archivo)
-        File.close(archivo)
-
-      {:error, razon} ->
-        IO.puts("Error al crear coincidencias_adn.csv: #{:file.format_error(razon)}")
-    end
+    manejar_archivo("coincidencias_adn.csv", fn archivo ->
+      with :ok <- IO.write(archivo, "muestra;motivo;orientacion;inicio;fin;diferencias\n"),
+           :ok <- escribir_filas(coincidencias, archivo) do
+        :ok
+      end
+    end)
   end
 
   # Caso base
-  defp escribir_filas([], archivo) do
-    archivo
+  defp escribir_filas([], _archivo) do
+    :ok
   end
 
   # Caso recursivo
@@ -68,9 +65,10 @@ defmodule Resultados_ADN do
     fila =
       "#{coincidencia.muestra};#{coincidencia.motivo};#{coincidencia.orientacion};#{coincidencia.inicio};#{coincidencia.fin};#{coincidencia.diferencias}\n"
 
-    IO.write(archivo, fila)
-
-    escribir_filas(cola, archivo)
+    with :ok <- IO.write(archivo, fila),
+         :ok <- escribir_filas(cola, archivo) do
+      :ok
+    end
   end
 
   @doc """
@@ -82,25 +80,23 @@ defmodule Resultados_ADN do
   - motivos_no_encontrados: lista motivos sin coincidencias
   """
   def generar_resumen(resumen_muestras, resumen_motivos, motivos_no_encontrados) do
-    case File.open("resumen_adn.txt", [:write]) do
-      {:ok, archivo} ->
-        IO.write(archivo, "RESUMEN DE BUSQUEDA DE MOTIVOS ADN\n\n")
-        IO.puts("RESUMEN DE BUSQUEDA DE MOTIVOS ADN\n")
+    IO.puts("RESUMEN DE BUSQUEDA DE MOTIVOS ADN\n")
 
-        escribir_resumen_muestras(resumen_muestras, archivo)
+    manejar_archivo("resumen_adn.txt", fn archivo ->
+      with :ok <- IO.write(archivo, "RESUMEN DE BUSQUEDA DE MOTIVOS ADN\n\n"),
+           :ok <- escribir_resumen_muestras(resumen_muestras, archivo) do
         imprimir_resumen_muestras(resumen_muestras)
 
-        escribir_resumen_motivos(resumen_motivos, archivo)
-        imprimir_resumen_motivos(resumen_motivos)
+        with :ok <- escribir_resumen_motivos(resumen_motivos, archivo) do
+          imprimir_resumen_motivos(resumen_motivos)
 
-        escribir_no_encontrados(motivos_no_encontrados, archivo)
-        imprimir_no_encontrados(motivos_no_encontrados)
-
-        File.close(archivo)
-
-      {:error, razon} ->
-        IO.puts("Error al crear resumen_adn.txt: #{:file.format_error(razon)}")
-    end
+          with :ok <- escribir_no_encontrados(motivos_no_encontrados, archivo) do
+            imprimir_no_encontrados(motivos_no_encontrados)
+            :ok
+          end
+        end
+      end
+    end)
   end
 
   # Caso base
@@ -110,9 +106,10 @@ defmodule Resultados_ADN do
 
   # Caso recursivo
   defp escribir_resumen_muestras(resumen, archivo) do
-    IO.write(archivo, "COINCIDENCIAS POR MUESTRA\n")
-
-    escribir_registros_muestras(resumen, archivo)
+    with :ok <- IO.write(archivo, "COINCIDENCIAS POR MUESTRA\n"),
+         :ok <- escribir_registros_muestras(resumen, archivo) do
+      :ok
+    end
   end
 
   # Caso baase
@@ -122,12 +119,14 @@ defmodule Resultados_ADN do
 
   # Caso recursivo
   defp escribir_registros_muestras([muestra | cola], archivo) do
-    IO.write(
-      archivo,
-      "#{muestra.muestra}: #{muestra.coincidencias} coincidencias\n"
-    )
-
-    escribir_registros_muestras(cola, archivo)
+    with :ok <-
+           IO.write(
+             archivo,
+             "#{muestra.muestra}: #{muestra.coincidencias} coincidencias\n"
+           ),
+         :ok <- escribir_registros_muestras(cola, archivo) do
+      :ok
+    end
   end
 
   # Caso base
@@ -161,9 +160,10 @@ defmodule Resultados_ADN do
 
   # Caso recursivo
   defp escribir_resumen_motivos(resumen, archivo) do
-    IO.write(archivo, "COINCIDENCIAS POR MOTIVO\n")
-
-    escribir_registros_motivos(resumen, archivo)
+    with :ok <- IO.write(archivo, "COINCIDENCIAS POR MOTIVO\n"),
+         :ok <- escribir_registros_motivos(resumen, archivo) do
+      :ok
+    end
   end
 
   # Caso base
@@ -173,12 +173,14 @@ defmodule Resultados_ADN do
 
   # Caso recursivo
   defp escribir_registros_motivos([motivo | cola], archivo) do
-    IO.write(
-      archivo,
-      "#{motivo.motivo}: #{motivo.coincidencias} coincidencias\n"
-    )
-
-    escribir_registros_motivos(cola, archivo)
+    with :ok <-
+           IO.write(
+             archivo,
+             "#{motivo.motivo}: #{motivo.coincidencias} coincidencias\n"
+           ),
+         :ok <- escribir_registros_motivos(cola, archivo) do
+      :ok
+    end
   end
 
   # Caso base
@@ -212,20 +214,23 @@ defmodule Resultados_ADN do
 
   # Caso recursivo
   defp escribir_no_encontrados(motivos, archivo) do
-    IO.write(archivo, "MOTIVOS NO ENCONTRADOS\n")
-
-    escribir_lista_no_encontrados(motivos, archivo)
+    with :ok <- IO.write(archivo, "MOTIVOS NO ENCONTRADOS\n"),
+         :ok <- escribir_lista_no_encontrados(motivos, archivo) do
+      :ok
+    end
   end
 
   # Caso base
-  defp escribir_lista_no_encontrados([], archivo) do
-    archivo
+  defp escribir_lista_no_encontrados([], _archivo) do
+    :ok
   end
 
   # Caso recursivo
   defp escribir_lista_no_encontrados([motivo | cola], archivo) do
-    IO.write(archivo, "#{motivo}\n")
-    escribir_lista_no_encontrados(cola, archivo)
+    with :ok <- IO.write(archivo, "#{motivo}\n"),
+         :ok <- escribir_lista_no_encontrados(cola, archivo) do
+      :ok
+    end
   end
 
   # Caso base
@@ -257,24 +262,46 @@ defmodule Resultados_ADN do
   - errores: lista mensajes de error encontrados
   """
   def escribir_errores(errores) do
-    case File.open("validacion_adn.txt", [:write]) do
-      {:ok, archivo} ->
-        escribir_lista_errores(errores, archivo)
-        File.close(archivo)
-
-      {:error, razon} ->
-        IO.puts("Error al crear validacion_adn.txt: #{:file.format_error(razon)}")
-    end
+    manejar_archivo("validacion_adn.txt", fn archivo ->
+      escribir_lista_errores(errores, archivo)
+    end)
   end
 
   # Caso base
-  defp escribir_lista_errores([], archivo) do
-    archivo
+  defp escribir_lista_errores([], _archivo) do
+    :ok
   end
 
   # Caso recursivo
   defp escribir_lista_errores([error | cola], archivo) do
-    IO.write(archivo, "#{error}\n")
-    escribir_lista_errores(cola, archivo)
+    with :ok <- IO.write(archivo, "#{error}\n"),
+         :ok <- escribir_lista_errores(cola, archivo) do
+      :ok
+    end
+  end
+
+  defp manejar_archivo(nombre, funcion) do
+    case File.open(nombre, [:write]) do
+      {:ok, archivo} ->
+        resultado_escritura = funcion.(archivo)
+        resultado_cierre = File.close(archivo)
+
+        case {resultado_escritura, resultado_cierre} do
+          {:ok, :ok} ->
+            :ok
+
+          {{:error, razon}, _} ->
+            IO.puts("Error al escribir #{nombre}: #{:file.format_error(razon)}")
+            {:error, razon}
+
+          {:ok, {:error, razon}} ->
+            IO.puts("Error al cerrar #{nombre}: #{:file.format_error(razon)}")
+            {:error, razon}
+        end
+
+      {:error, razon} ->
+        IO.puts("Error al crear #{nombre}: #{:file.format_error(razon)}")
+        {:error, razon}
+    end
   end
 end
