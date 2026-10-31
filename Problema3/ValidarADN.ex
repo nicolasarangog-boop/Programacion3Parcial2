@@ -43,7 +43,7 @@ defmodule Validacion_ADN do
     {identificadores_vistos, errores} =
       cond do
         identificador == "" ->
-          mensaje = "Error: Identificador vacío en linea #{muestra.linea_encabezado}"
+          mensaje = "Error: Identificador vacio en linea #{muestra.linea_encabezado}"
           {identificadores_vistos, [mensaje | errores]}
 
         identificador in identificadores_vistos ->
@@ -77,7 +77,7 @@ defmodule Validacion_ADN do
   # Caso recursivo
   defp validar_fragmentos([fragmento | cola], identificador, errores) do
     bases = String.graphemes(fragmento.contenido)
-    errores = validar_bases(bases, 1, fragmento.numero_linea, identificador, :muestra, errores)
+    errores = validar_bases(bases, 0, fragmento.numero_linea, identificador, :muestra, errores)
     validar_fragmentos(cola, identificador, errores)
   end
 
@@ -95,10 +95,10 @@ defmodule Validacion_ADN do
         mensaje =
           case tipo do
             :muestra ->
-              "Error: Base inválida #{base} en muestra #{identificador} en linea #{linea} y posición #{posicion}"
+              "Error: Base invalida #{base} en muestra #{identificador} en linea #{linea} y posicion #{posicion}"
 
             :motivo ->
-              "Error: Base inválida #{base} en motivo #{identificador} en linea #{linea} y posición #{posicion}"
+              "Error: Base invalida #{base} en motivo #{identificador} en linea #{linea} y posicion #{posicion}"
           end
 
         [mensaje | errores]
@@ -116,12 +116,12 @@ defmodule Validacion_ADN do
   defp validar_motivos([motivo | cola], errores) do
     errores =
       if motivo.secuencia == "" do
-        mensaje = "Error: Motivo vacío en linea #{motivo.linea}"
+        mensaje = "Error: Motivo vacio en linea #{motivo.linea}"
         [mensaje | errores]
       else
         validar_bases(
           String.graphemes(motivo.secuencia),
-          1,
+          0,
           motivo.linea,
           motivo.secuencia,
           :motivo,
