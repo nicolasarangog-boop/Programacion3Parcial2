@@ -1,5 +1,5 @@
 defmodule Terreno do
-  @typedoc """
+  @moduledoc """
   Representa un terreno dentro del edificio donde se desplaza
   el robot de rescate.
 
@@ -15,7 +15,7 @@ defmodule Terreno do
 end
 
 defmodule Recorrido do
-  @typedoc """
+  @moduledoc """
   Representa un recorrido realizado por el robot de rescate
   desde una posición inicial hasta una posición objetivo.
 
