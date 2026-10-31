@@ -53,7 +53,7 @@ defmodule Archivos_ADN do
   Función que mediante recursividad elimina motivos duplicados y respetando el orden inicial
 
   ## Parámetros
-  - motivo: Flujo de mapas de motivos ADN que se desea eliminar duplicados
+  - motivos: Flujo de mapas de motivos ADN que se desea eliminar duplicados
   """
   def eliminar_duplicados(motivos) do
     Enum.to_list(motivos)

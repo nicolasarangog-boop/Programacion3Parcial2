@@ -1,0 +1,12 @@
+RESUMEN DE BUSQUEDA DE MOTIVOS ADN
+
+COINCIDENCIAS POR MUESTRA
+directa: 1 coincidencias
+reversa: 1 coincidencias
+una_sustitucion: 1 coincidencias
+
+COINCIDENCIAS POR MOTIVO
+ACG: 3 coincidencias
+
+MOTIVOS NO ENCONTRADOS
+Ninguno
