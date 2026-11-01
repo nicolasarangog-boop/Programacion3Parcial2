@@ -25,7 +25,7 @@ defmodule Resultados_ADN do
   def ordenar_coincidencias(coincidencias) do
     Enum.sort_by(coincidencias, fn coincidencia ->
       orden_orientacion =
-        if coincidencia.orientacion == "-" do
+        if coincidencia.orientacion == "+" do
           0
         else
           1
