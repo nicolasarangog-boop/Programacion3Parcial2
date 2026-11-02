@@ -1,51 +1,58 @@
 defmodule RobotRescate do
-  
-@moduledoc """
-Modulo Principal donde se coordinan los demás modulos
-- Autores: Briyith Sanchez Alonso y Nicolás Arango Gutiérrez
-- Fecha: Octubre del 2026
-- Licencia: GNU GPL V3
-"""
+  @moduledoc """
+  Modulo Principal donde se coordinan los demás modulos
+  - Autores: Briyith Sanchez Alonso y Nicolás Arango Gutiérrez
+  - Fecha: Octubre del 2026
+  - Licencia: GNU GPL V3
+  """
 
   def main do
-    archivo_edificio = "edificio.txt"
-    archivo_terrenos = "terrenos.csv"
-    archivo_bateria = "bateria.txt"
+    archivos_requeridos = ["edificio.txt", "terrenos.csv", "bateria.txt"]
 
-    terrenos = Lector.cargar_terrenos(archivo_terrenos)
-    bateria = Lector.cargar_bateria(archivo_bateria)
-    lineas_edificio = Lector.leer_lineas_edificio(archivo_edificio)
+    archivos_faltantes = Enum.filter(archivos_requeridos, &(not File.exists?(&1)))
 
-    case Validacion.validar_edificio_recursivo(lineas_edificio, terrenos, bateria) do
-      {:error, errores} ->
-        Svg.guardar_errores("validacion_edificio.txt", errores)
-        IO.puts("Se encontraron errores de validación. Revisa 'validacion_edificio.txt'.")
+    if archivos_faltantes != [] do
+      IO.puts("Error: No existe el archivo requerido: #{Enum.join(archivos_faltantes, ", ")}. Verifique los archivos de entrada.")
+    else
+      archivo_edificio = "edificio.txt"
+      archivo_terrenos = "terrenos.csv"
+      archivo_bateria = "bateria.txt"
 
-      :ok ->
-        File.write!("validacion_edificio.txt", "OK: Edificio y parámetros válidos.\n")
-        {matriz, inicio, meta, filas, cols} = parsear_matriz(lineas_edificio, terrenos)
+      terrenos = Lector.cargar_terrenos(archivo_terrenos)
+      bateria = Lector.cargar_bateria(archivo_bateria)
+      lineas_edificio = Lector.leer_lineas_edificio(archivo_edificio)
 
-        {alcanzable, pasos_expansion, indice_est} =
-          Expansion.generar_stream_energia(matriz, inicio, meta, bateria, filas, cols)
+      case Validacion.validar_edificio_recursivo(lineas_edificio, terrenos, bateria) do
+        {:error, errores} ->
+          Svg.guardar_errores("validacion_edificio.txt", errores)
+          IO.puts("Se encontraron errores de validación. Revisa 'validacion_edificio.txt'.")
 
-        Svg.guardar_expansion("expansion_energia.txt", pasos_expansion, indice_est)
+        :ok ->
+          File.write!("validacion_edificio.txt", "OK: Edificio y parámetros válidos.\n")
+          {matriz, inicio, meta, filas, cols} = parsear_matriz(lineas_edificio, terrenos)
 
-        if not alcanzable do
-          IO.puts("La meta no es alcanzable dentro del presupuesto de batería.")
-          Svg.construir_svg("ruta_optima.svg", matriz, filas, cols, nil, true)
-          File.write!("resumen_rescate.txt", "No existe recorrido válido.\n")
-          File.write!("recorridos_rescate.csv", "id;movimientos;energia;posiciones\n")
-        else
-          recorridos = Rescate.buscar_recorridos(matriz, inicio, meta, bateria, filas, cols)
+          {alcanzable, pasos_expansion, indice_est} =
+            Expansion.generar_stream_energia(matriz, inicio, meta, bateria, filas, cols)
 
-          Svg.guardar_csv_recorridos("recorridos_rescate.csv", recorridos)
-          Svg.generar_resumen("resumen_rescate.txt", recorridos)
+          Svg.guardar_expansion("expansion_energia.txt", pasos_expansion, indice_est)
 
-          ruta_optima = seleccionar_ruta_optima(recorridos)
-          Svg.construir_svg("ruta_optima.svg", matriz, filas, cols, ruta_optima, false)
+          if not alcanzable do
+            IO.puts("La meta no es alcanzable dentro del presupuesto de batería.")
+            Svg.construir_svg("ruta_optima.svg", matriz, filas, cols, nil, true)
+            File.write!("resumen_rescate.txt", "No existe recorrido válido.\n")
+            File.write!("recorridos_rescate.csv", "id;movimientos;energia;posiciones\n")
+          else
+            recorridos = Rescate.buscar_recorridos(matriz, inicio, meta, bateria, filas, cols)
 
-          IO.puts("Proceso completado exitosamente.")
-        end
+            Svg.guardar_csv_recorridos("recorridos_rescate.csv", recorridos)
+            Svg.generar_resumen("resumen_rescate.txt", recorridos)
+
+            ruta_optima = seleccionar_ruta_optima(recorridos)
+            Svg.construir_svg("ruta_optima.svg", matriz, filas, cols, ruta_optima, false)
+
+            IO.puts("Proceso completado exitosamente.")
+          end
+      end
     end
   end
 
