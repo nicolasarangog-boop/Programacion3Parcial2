@@ -1,0 +1,22 @@
+1. Abrir la carpeta principal del proyecto.
+
+2. En la barra de direcciones del Explorador de archivos, escribir cmd y presionar Enter para abrir la terminal en esa ubicación.
+
+3. Escribir el comando ejecutar.bat y presionar Enter.
+
+4. Aparecerá un menú con tres opciones:
+- 1. Problema 1 - Robot de rescate.
+- 2. Problema 3 - Búsqueda de ADN.
+- 3. Salir.
+
+5. Para ejecutar el primer problema, escribir 1 y presionar Enter. Se abrirá una nueva ventana de CMD donde se ejecutará el programa.
+
+6. Para ejecutar el segundo problema, regresar a la ventana principal, escribir 2 y presionar Enter. Se abrirá una nueva ventana de CMD donde se ejecutará el programa.
+
+7. Una vez finalizada la ejecución, revisar los resultados generados dentro de la carpeta correspondiente al problema y cerrar la ventana correspondiente al problema.
+
+8. Para ejecutar nuevamente cualquiera de los problemas, seleccionar la opción correspondiente en el menú principal.
+
+9. Para finalizar, seleccionar la opción 3 en el menú principal.
+
+NOTA: Cada problema se ejecuta en una ventana independiente de CMD, por lo que el menú principal permanece disponible para ejecutar cualquiera de los dos programas sin necesidad de volver a iniciarlo.
